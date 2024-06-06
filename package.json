@@ -3,21 +3,22 @@
     "version": "1.0.7",
     "description": "Nutanix Prism API Client",
     "dependencies": {
-      "request": ">=2.81.0"
+        "axios": "^1.7.2",
+        "https": "^1.0.0"
     },
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [
-      "Nutanix",
-      "Prism",
-      "API",
-      "Promises",
-      "JSON",
-      "Javascript"
+        "Nutanix",
+        "Prism",
+        "API"
     ],
+    "repository": {
+        "type": "git",
+        "url": "gitlab.rtp.nutanix.com:corp-se-team/prism_api"
+      },
     "author": "outcome_engineering@nutanix.com",
-    "license": "ISC"
-  }
-  
+    "license": "Apache 2.0"
+}

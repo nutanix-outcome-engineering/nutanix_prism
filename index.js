@@ -1,5 +1,6 @@
 'use strict'
-let request = require('request')
+const axios = require('axios')
+const https = require('https')
 
 // PRISM CLUSTER FUNCTIONS
 module.exports.cluster = {
@@ -621,42 +622,17 @@ module.exports.snmp = {
 }
 
 // CALL THE PRISM API
-function call (opts) {
-    return new Promise (( resolve, reject ) => {
-        let options = {
-            auth: opts.creds,
-            timeout: opts.timeout || 20000,
-            //time: 5000,
-            method: opts.method,
-            uri: opts.url,
-            json: true,
-            rejectUnauthorized: false,
-            body: opts.body
-        }
-        request(options, function(err, response, body) {
-            if (err) {
-                reject('Prism Failure: ' + err)
-            }
-            else if (response['statusMessage'] == 'Unauthorized' || response.statusCode > 202) {
-                let rejectData = ''
-                try {
-                    rejectData = JSON.parse(body)
-                }
-                catch (err) {
-                    rejectData = JSON.stringify(body)
-                }
-                reject('Prism Failure: ' + response['statusMessage'] + ' : ' + rejectData)
-            }
-            else {
-                let sendData = ''
-                try {
-                    sendData = JSON.parse(response.body)
-                }
-                catch (err) {
-                    sendData = response.body
-                }
-                resolve(sendData)
-            }
-        })
+async function call(opts) {
+    let response = await axios.request({
+      auth: opts.creds,
+      timeout: opts.timeout || 20000,
+      httpsAgent: new https.Agent({rejectUnauthorized: false}),
+      method: opts.method,
+      url: opts.url,
+      rejectUnauthorized: false,
+      data: opts.body
     })
-}
+  
+    return response.data
+  }
+  
