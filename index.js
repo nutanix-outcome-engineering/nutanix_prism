@@ -1,6 +1,7 @@
 'use strict'
 const axios = require('axios')
 const https = require('https')
+const FormData = require('form-data');
 
 // PRISM CLUSTER FUNCTIONS
 module.exports.cluster = {
@@ -27,6 +28,159 @@ module.exports.cluster = {
         opts.method = 'PATCH'
         opts.body = {
             clusterExternalDataServicesIPAddress: opts.dataServicesIP
+        }
+        return call(opts)
+    },
+    setSMTPv1: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/smtp`
+        opts.method = 'PUT'
+        opts.body = {
+            "serverAddress": {
+              "hostname": opts.serverAddress
+            },
+            "port": opts.port,
+            "secureMode": opts.secureMode || 'NONE',
+            "fromEmailAddress": opts.fromEmailAddress || 'noreply@nutanix.com'
+          }
+          if (opts.username) {opts.body.username = opts.username}
+          if (opts.password) {opts.body.password = opts.password}
+          return call(opts)
+        },
+    importPECertificate: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/keys/pem/import`
+        opts.method = 'POST'
+        // Options: RSA_2048, RSA_4096, ECDSA_256, ECDSA_384, ECDSA_521
+        let keyType = opts.keyType || 'RSA_4096'
+        const form = new FormData();
+        form.append('keyType', keyType);
+        form.append('key', opts.key);
+        form.append('cert', opts.cert);
+        form.append('caChain', opts.caChain);
+
+        return postForm(opts,form)
+    },
+    getAuthConfig: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/authconfig`
+        opts.method = 'GET'
+        return call(opts)
+    },
+    enableAllAuthTypes: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/authconfig/auth_types`
+        opts.method = 'PUT'
+        opts.body = ["LOCAL","DIRECTORY_SERVICE"]
+        return call(opts)
+    },
+    addActiveDirectory: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/authconfig/directories`
+        opts.method = 'POST'
+        opts.body = {
+            "name": `${opts.directoryName}`,
+            "domain": `${opts.domain}`,
+            "directoryUrl": `${opts.directoryUrl}`,
+            "groupSearchType": "NON_RECURSIVE",
+            "directoryType": "ACTIVE_DIRECTORY",
+            "connectionType": "LDAP",
+            "serviceAccountUsername": `${opts.serviceAccountUsername}`,
+            "serviceAccountPassword": `${opts.serviceAccountPassword}`
+          }
+        if (opts.groupSearchType) {opts.body.groupSearchType = opts.groupSearchType}
+        return call(opts)
+    },
+    getRoleMappings: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/authconfig/directories/${opts.directoryName}/role_mappings`
+        opts.method = 'GET'
+        return call(opts)
+    },
+    addUserAdminRoleMappingToUser: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/authconfig/directories/${opts.directoryName}/role_mappings`
+        opts.method = 'POST'
+        opts.body = {
+            "directoryName": `${opts.directoryName}`,
+            "role": 'ROLE_USER_ADMIN',
+            "entityType": 'USER',
+            "entityValues": [
+              `${opts.username}`
+            ]
+          }
+        return call(opts)
+    },
+    addDNSServerList: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/name_servers/add_list`
+        opts.method = 'POST'
+        let dnsServers = opts.dnsServerList.map((dnsServer) => ({"ipv4":dnsServer}))
+        opts.body = dnsServers
+        return call(opts)
+    },
+    removeDNSServerList: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/name_servers/remove_list`
+        opts.method = 'POST'
+        let dnsServers = opts.dnsServerList.map((dnsServer) => ({"ipv4":dnsServer}))
+        opts.body = dnsServers
+        return call(opts)
+    },
+    getNTPServerList: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/ntp_servers`
+        opts.method = 'GET'
+        return call(opts)
+    },
+    addNTPServerList: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/ntp_servers/add_list`
+        opts.method = 'POST'
+        let ntpServers = opts.ntpServerList.map((ntpServer) => ({"ipv4":ntpServer}))
+        opts.body = ntpServers
+        return call(opts)
+    },
+    removeNTPServerList: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/ntp_servers/remove_list`
+        opts.method = 'POST'
+        let ntpServers = opts.ntpServerList.map((ntpServer) => ({"ipv4":ntpServer}))
+        opts.body = ntpServers
+        return call(opts)
+    },
+    getLCMConfig: opts => {
+        opts.url = `https://${opts.ip}:9440/api/lcm/v4.0.a1/resources/config`
+        opts.method = 'GET'
+        return call(opts)
+    },
+    setLCMConfig: opts => {
+        opts.url = `https://${opts.ip}:9440/api/lcm/v4.0.a1/resources/config`
+        opts.method = 'PUT'
+        opts.body = {
+            "$reserved": {
+              "ETag": `${opts.etag}`
+            },
+            "$objectType": "lcm.v4.resources.LcmConfig",
+            "$unknownFields": {}
+        }
+        if (opts.darkSiteUrl) {
+            opts.body.isDarksite = true
+            opts.body.url = opts.darkSiteUrl
+            if(opts.darkSiteUrl.includes('https://')) {
+                opts.body.enableHttps = true
+            }
+        }
+        else {
+            opts.body.isDarksite = false
+        }
+        if(opts.enableHttps) {opts.body.enableHttps = true}
+        return callv4(opts)
+    },
+    performLCMInventory: opts => {
+        opts.url = `https://${opts.ip}:9440/api/lcm/v4.0.a1/operations/$actions/performInventory`
+        opts.method = 'POST'
+        return call(opts)
+    },
+    getAlertConfig: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/alerts/configuration`
+        opts.method = 'GET'
+        return call(opts)
+    },
+    disableAlertEmails: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/alerts/configuration`
+        opts.method = 'PUT'
+        opts.body = {
+            "enable": false,
+            "enableEmailDigest": false
         }
         return call(opts)
     },
@@ -58,18 +212,18 @@ module.exports.container = {
             opts.body = {
                 containerName: opts.containerName,
                 datastoreName: opts.containerName,
-                nodeIds: opts.nodeIds,
                 readOnly: false
             }
+            if (opts.nodeIds) {opts.body.nodeIds = opts.nodeIds}
             return call(opts)
         },
         delete: opts => {
             opts.url = 'https://' + opts.ip + ':9440/PrismGateway/services/rest/v2.0/storage_containers/datastores/remove_datastore'
             opts.method = 'POST'
             opts.body = {
-                datastore_name: opts.containerName,
-                node_ids: opts.nodeIds
+                datastore_name: opts.containerName
             }
+            if (opts.nodeIds) {opts.body.node_ids = opts.nodeIds}
             return call(opts)
         },
         get: opts => {
@@ -386,6 +540,20 @@ module.exports.storagePool = {
         opts.url = 'https://' + opts.ip + ':9440/PrismGateway/services/rest/v1/storage_pools/'
         opts.method = 'GET'
         return call(opts)
+    },
+    getByName: opts => {
+        opts.url = `https://${opts.ip}:9440//PrismGateway/services/rest/v1/storage_pools/?searchString=${opts.storagePoolName}`
+        opts.method = 'GET'
+        return call(opts)
+    },
+    rename: opts => {
+        opts.url = `https://${opts.ip}:9440/PrismGateway/services/rest/v1/storage_pools/`
+        opts.method = 'PATCH'
+        opts.body = {
+            name: opts.name,
+            storagePoolUuid: opts.storagePoolUuid
+        }
+        return call(opts)
     }
 }
 // PRISM TASK FUNCTIONS
@@ -635,4 +803,31 @@ async function call(opts) {
   
     return response.data
   }
+
+  async function callv4(opts) {
+    let response = await axios.request({
+      auth: opts.creds,
+      timeout: opts.timeout || 20000,
+      httpsAgent: new https.Agent({rejectUnauthorized: false}),
+      method: opts.method,
+      url: opts.url,
+      rejectUnauthorized: false,
+      headers: {'If-Match':opts.etag},
+      data: opts.body
+    })
+  
+    return response.data
+  }
+
+async function postForm(opts, form) {
+    let response = await axios.post(opts.url,form, {
+        auth: opts.creds,
+        timeout: opts.timeout || 20000,
+        httpsAgent: new https.Agent({rejectUnauthorized: false}),
+        url: opts.url,
+        rejectUnauthorized: false,
+    })
+
+    return response.data
+}
   
