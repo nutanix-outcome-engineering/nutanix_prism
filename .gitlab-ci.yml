@@ -13,6 +13,7 @@ workflow:
 
 stages:
   - test
+  - build
   - scan
 
 test:
@@ -22,6 +23,19 @@ test:
   rules:
     - when: always
       allow_failure: false
+build:
+  stage: build
+  script:
+    - /bin/bash bin/package.sh
+  needs:
+    - test
+  artifacts:
+    untracked: false
+    when: on_success
+    expire_in: "30 days"
+    paths:
+      - dependencies.tar.gz
+      - prism_api.tar.gz
 scan:
   stage: scan
   image: eclipse-temurin:17
