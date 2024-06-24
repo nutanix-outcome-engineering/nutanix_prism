@@ -13,6 +13,7 @@ workflow:
 
 stages:
   - test
+  - scan
 
 test:
   stage: test
@@ -21,3 +22,10 @@ test:
   rules:
     - when: always
       allow_failure: false
+scan:
+  stage: scan
+  image: eclipse-temurin:17
+  needs:
+    - build
+  script:
+    - /bin/bash bin/blackduck.sh
