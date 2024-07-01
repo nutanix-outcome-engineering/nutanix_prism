@@ -59,6 +59,20 @@ module.exports.cluster = {
 
         return postForm(opts,form)
     },
+    addSSHKey: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/public_keys`
+        opts.method = 'POST'
+        opts.body = {
+            "name": opts.keyName,
+            "key": opts.key
+          }
+        return call(opts)
+    },
+    getSSHKeys: opts => {
+        opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/cluster/public_keys`
+        opts.method = 'GET'
+        return call(opts)
+    },
     getAuthConfig: opts => {
         opts.url =`https://${opts.ip}:9440/PrismGateway/services/rest/v1/authconfig`
         opts.method = 'GET'
