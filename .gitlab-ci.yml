@@ -49,7 +49,7 @@ scan:
     - /bin/bash bin/veracode.sh
   artifacts:
     untracked: false
-    when: on_success
+    when: always
     expire_in: "30 days"
     paths:
       - results.json

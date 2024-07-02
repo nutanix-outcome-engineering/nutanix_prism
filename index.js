@@ -735,7 +735,7 @@ module.exports.prism_central = {
         opts.method = 'POST'
         opts.body = {
             "ipAddresses":[opts.pcIP],
-            "username":"admin",
+            "username": opts.pcUsername || opts.creds.username,
             "password": opts.pcPassword,
             "port": 9440
         }
@@ -753,7 +753,7 @@ module.exports.util = {
         opts.url = 'https://' + opts.ip + ':9440/PrismGateway/services/rest/v1/utils/change_default_system_password',
         opts.method = 'POST'
         opts.creds = {
-            username: 'admin',
+            username: opts.username || opts.creds.username,
             password: 'Nutanix/4u'
         }
         opts.body = {
