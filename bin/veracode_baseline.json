@@ -1,0 +1,95 @@
+{
+    "_links": {
+      "root": {
+        "href": "/"
+      },
+      "self": {
+        "href": "/scans/0bddeaf0-7c5d-4c5c-abdd-afbf2d09c38b/findings"
+      },
+      "help": {
+        "href": "https://help.veracode.com/reader/tS9CaFwL4_lbIEWWomsJoA/ovfZGgu96UINQxIuTqRDwg"
+      }
+    },
+    "scan_id": "0bddeaf0-7c5d-4c5c-abdd-afbf2d09c38b",
+    "scan_status": "SUCCESS",
+    "message": "Scan successful. Results size: 3492 bytes",
+    "modules": [
+      "JS files within prism_api.tar.gz"
+    ],
+    "modules_count": 1,
+    "findings": [
+      {
+        "title": "set",
+        "issue_id": 1000,
+        "image_path": "index.js",
+        "gob": "B",
+        "severity": 3,
+        "issue_type_id": "crypto",
+        "issue_type": "Use of Hard-coded Password",
+        "cwe_id": "259",
+        "display_text": "\u003cspan\u003eThis variable assignment uses a hard-coded password that may compromise system security in a way that cannot be easily remedied.  The use of a hard-coded password significantly increases the possibility that the account being protected will be compromised.  Moreover, the password cannot be changed without patching the software.  If a hard-coded password is compromised in a commercial product, all deployed instances may be vulnerable to attack.  In some cases, this finding may indicate a reference to a password (e.g. the name of a key in a properties file) rather than an actual password. set\u003c/span\u003e \u003cspan\u003eStore passwords out-of-band from the application code.  Follow best practices for protecting credentials stored in locations such as configuration or properties files. An HSM may be appropriate for particularly sensitive credentials.\u003c/span\u003e \u003cspan\u003eReferences: \u003ca href\u003d\"https://cwe.mitre.org/data/definitions/259.html\"\u003eCWE\u003c/a\u003e\u003c/span\u003e",
+        "files": {
+          "source_file": {
+            "file": "index.js",
+            "line": 757,
+            "function_name": "lambda_89",
+            "qualified_function_name": "lambda_89",
+            "function_prototype": "lambda_89(: any,  : any, ...) : any",
+            "scope": "UNKNOWN"
+          }
+        },
+        "flaw_match": {
+          "procedure_hash": "1436709642",
+          "prototype_hash": "2389053328",
+          "flaw_hash": "4209603524",
+          "flaw_hash_count": 2,
+          "flaw_hash_ordinal": 1,
+          "cause_hash": "167600011",
+          "cause_hash_count": 1,
+          "cause_hash_ordinal": 1,
+          "cause_hash2": "0",
+          "cause_hash2_ordinal": "0"
+        },
+        "stack_dumps": {},
+        "flaw_details_link": "https://downloads.veracode.com/securityscan/cwe/v4/java/259.html"
+      },
+      {
+        "title": "set",
+        "issue_id": 1001,
+        "image_path": "index.js",
+        "gob": "B",
+        "severity": 3,
+        "issue_type_id": "crypto",
+        "issue_type": "Use of Hard-coded Password",
+        "cwe_id": "259",
+        "display_text": "\u003cspan\u003eThis variable assignment uses a hard-coded password that may compromise system security in a way that cannot be easily remedied.  The use of a hard-coded password significantly increases the possibility that the account being protected will be compromised.  Moreover, the password cannot be changed without patching the software.  If a hard-coded password is compromised in a commercial product, all deployed instances may be vulnerable to attack.  In some cases, this finding may indicate a reference to a password (e.g. the name of a key in a properties file) rather than an actual password. set\u003c/span\u003e \u003cspan\u003eStore passwords out-of-band from the application code.  Follow best practices for protecting credentials stored in locations such as configuration or properties files. An HSM may be appropriate for particularly sensitive credentials.\u003c/span\u003e \u003cspan\u003eReferences: \u003ca href\u003d\"https://cwe.mitre.org/data/definitions/259.html\"\u003eCWE\u003c/a\u003e\u003c/span\u003e",
+        "files": {
+          "source_file": {
+            "file": "index.js",
+            "line": 760,
+            "function_name": "lambda_89",
+            "qualified_function_name": "lambda_89",
+            "function_prototype": "lambda_89(: any,  : any, ...) : any",
+            "scope": "UNKNOWN"
+          }
+        },
+        "flaw_match": {
+          "procedure_hash": "1436709642",
+          "prototype_hash": "2389053328",
+          "flaw_hash": "4209603524",
+          "flaw_hash_count": 2,
+          "flaw_hash_ordinal": 2,
+          "cause_hash": "167600011",
+          "cause_hash_count": 1,
+          "cause_hash_ordinal": 1,
+          "cause_hash2": "0",
+          "cause_hash2_ordinal": "0"
+        },
+        "stack_dumps": {},
+        "flaw_details_link": "https://downloads.veracode.com/securityscan/cwe/v4/java/259.html"
+      }
+    ],
+    "selected_modules": [],
+    "pipeline_scan": "24.6.1-0",
+    "dev_stage": "DEVELOPMENT"
+  }
