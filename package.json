@@ -9,7 +9,7 @@
     },
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"This is a NOOP. No tests exist.\" && exit 0"
     },
     "keywords": [
         "Nutanix",
@@ -18,7 +18,7 @@
     ],
     "repository": {
         "type": "git",
-        "url": "gitlab.rtp.nutanix.com:corp-se-team/prism_api"
+        "url": "https://github.com/nutanix-outcome-engineering/nutanix_prism"
     },
     "author": "outcome_engineering@nutanix.com",
     "license": "Apache 2.0"
